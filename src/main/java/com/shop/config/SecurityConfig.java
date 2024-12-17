@@ -20,6 +20,14 @@ public class SecurityConfig {
        log.info("--------------------filterChain----------------------------");
 
        http
+               .authorizeHttpRequests(config-> config
+                       .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
+                       .requestMatchers("/","/members/**", "/item/**", "/images/**").permitAll()
+                       .requestMatchers("/admin/**").hasRole("ADMIN")
+                       .anyRequest().authenticated()
+               );
+
+       http
                .formLogin(config->
                         config.loginPage("/members/login")
                        .defaultSuccessUrl("/")
