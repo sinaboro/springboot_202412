@@ -22,7 +22,7 @@ spring:
       max-request-size: 100MB #요청당 최대 파일 사이즈
 
 itemImgLocation: c:/shop/item
-uploadPath: file:///C:/shop
+uploadPath: file:///C:/shop/
 
 logging:
   level:
