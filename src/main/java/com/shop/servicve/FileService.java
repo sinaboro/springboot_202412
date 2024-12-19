@@ -17,6 +17,7 @@ public class FileService {
 
     // c:/shop 파일 저장
     public String uploadFile(String uploadPath, String orginalFileName, byte[] fileDate) throws Exception {
+
         UUID uuid = UUID.randomUUID();
 
         //test.jpg  확장자 읽기
@@ -25,7 +26,7 @@ public class FileService {
         log.info("extension -> " + extension);
 
         String savedFileName = uuid.toString() + extension;
-        String fileUploadFullUrl = uploadPath +"/" +  savedFileName;
+        String fileUploadFullUrl = uploadPath +"/" +  savedFileName;  // c:/shop/item/1607e07f-c0f9-4545-8329-f6d88927fad9.jpg
 
         FileOutputStream fos = new FileOutputStream(fileUploadFullUrl);
         fos.write(fileDate);
