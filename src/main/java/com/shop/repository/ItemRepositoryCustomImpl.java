@@ -61,18 +61,21 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
 
         log.info("-------------------------------------------------------------------");
+        log.info("itemSearchDto : " + itemSearchDto);
+        log.info("pageable : " + pageable);
         log.info(regDtsAfter(itemSearchDto.getSearchDateType()));
-        log.info(searchSellStatusEq(itemSearchDto.getItemSellStatus()));
+        log.info(searchSellStatusEq(itemSearchDto.getSearchSellStatus()));
         log.info(searchByLike(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery()));
         log.info(pageable.getOffset());
         log.info(pageable.getPageSize());
         log.info("-------------------------------------------------------------------");
 
-        List<Item> content = jpaQueryFactory.select(QItem.item)
-                .where(regDtsAfter(itemSearchDto.getSearchDateType())
-                        , searchSellStatusEq(itemSearchDto.getItemSellStatus())
-                        , searchByLike(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery())
-                )
+        List<Item> content = jpaQueryFactory
+                .selectFrom(QItem.item)
+                .where(regDtsAfter(itemSearchDto.getSearchDateType()),
+                        searchSellStatusEq(itemSearchDto.getSearchSellStatus()),
+                        searchByLike(itemSearchDto.getSearchBy(),
+                                itemSearchDto.getSearchQuery()))
                 .orderBy(QItem.item.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -80,9 +83,11 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 
         Long total = jpaQueryFactory.select(Wildcard.count).from(QItem.item)
                 .where(regDtsAfter(itemSearchDto.getSearchDateType())
-                        , searchSellStatusEq(itemSearchDto.getItemSellStatus())
+                        , searchSellStatusEq(itemSearchDto.getSearchSellStatus())
                         , searchByLike(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery())
                 ).fetchOne();
+
+        log.info("total : " + total);
 
         return new PageImpl<>(content, pageable, total);
     }
