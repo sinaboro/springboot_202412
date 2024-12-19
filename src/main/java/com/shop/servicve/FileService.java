@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
-@Log
 @Log4j2
 public class FileService {
 

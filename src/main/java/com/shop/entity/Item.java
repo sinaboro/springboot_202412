@@ -2,10 +2,12 @@ package com.shop.entity;
 
 import com.shop.constant.ItemSellStatus;
 import com.shop.dto.ItemFormDto;
+import com.shop.dto.ItemImgDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 
@@ -45,5 +47,13 @@ public class Item extends BaseEntity {
         this.itemDetail = itemFormDto.getItemDetail();
         this.itemSellStatus = itemFormDto.getItemSellStatus();
     }
+
+    /*
+        private static ModelMapper modelMapper = new ModelMapper();
+        //ItemImg 받아서 , ItemImgDto로 변환
+        public static void of(ItemImgDto itemFormDto) {
+            modelMapper.map(itemFormDto, Item.class);
+        }
+     */
 }
 
