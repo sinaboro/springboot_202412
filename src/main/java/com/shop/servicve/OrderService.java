@@ -1,18 +1,22 @@
 package com.shop.servicve;
 
 import com.shop.dto.OrderDto;
-import com.shop.entity.Item;
-import com.shop.entity.Member;
-import com.shop.entity.Order;
-import com.shop.entity.OrderItem;
+import com.shop.dto.OrderHistDto;
+import com.shop.dto.OrderItemDto;
+import com.shop.entity.*;
+import com.shop.repository.ItemImgRepository;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
 import com.shop.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final ItemImgRepository itemImgRepository;
 
     //               >>상품번호,수량,         회원ID
     public Long order(OrderDto orderDto, String email){
@@ -52,5 +57,56 @@ public class OrderService {
         orderRepository.save(order);
 
         return order.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderHistDto> getOrderList(String email, Pageable pageable){
+
+        List<Order> orders = orderRepository.findOrders(email, pageable);
+        Long totalCount = orderRepository.countOrders(email);
+
+        List<OrderHistDto> orderHistDtos = new ArrayList<>();
+
+        for (Order order : orders) {
+            OrderHistDto orderHistDto = new OrderHistDto(order);
+            List<OrderItem> orderItems = order.getOrderItems();
+
+            for(OrderItem orderItem : orderItems){
+                ItemImg itemImg =
+                        itemImgRepository.findByItemIdAndRepimgYn(orderItem.getItem().getId(), "Y");
+
+                OrderItemDto orderItemDto = new OrderItemDto(orderItem, itemImg.getImgUrl());
+
+                orderHistDto.addOrderItemDto(orderItemDto);
+            }
+            orderHistDtos.add(orderHistDto);
+        }
+
+        return new PageImpl<>(orderHistDtos, pageable, totalCount);
+    }
+
+    //주문 취소 본인이 맞는지 확인??
+    @Transactional(readOnly = true)
+    public boolean validateOrder(Long orderId, String email){
+
+        Member curMember = memberRepository.findByEmail(email);
+
+        Order order  = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        Member savedMember = order.getMember();
+
+        if(!StringUtils.equals(curMember.getEmail(), savedMember.getEmail())){
+            return false;
+        }
+
+        return true;
+    }
+
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId).
+                orElseThrow(() -> new EntityNotFoundException());
+
+        order.cancelOrder();
     }
 }
