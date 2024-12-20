@@ -40,7 +40,7 @@ public class MemberTest {
 
         log.info(user.getRegTime());
         log.info(user.getUpdateTime());
-        log.info(user.getCreateBy());
+        log.info(user.getCreatedBy());
         log.info(user.getModifiedBy());
     }
 }

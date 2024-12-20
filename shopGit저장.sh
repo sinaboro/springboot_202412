@@ -1,3 +1,3 @@
 git add .
-git commit -m "6장 상품등록및조회완료"
+git commit -m "7장 01"
 git push origin main
