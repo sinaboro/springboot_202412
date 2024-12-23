@@ -24,4 +24,11 @@ public class Cart  extends  BaseEntity{
     //Member table있는 member_id를 외래키 설정하라!
     @JoinColumn(name="member_id")
     private Member member;
+
+    //카드 생성
+    public static Cart createCart(Member member) {
+        Cart cart = new Cart();
+        cart.setMember(member);
+        return cart;
+    }
 }

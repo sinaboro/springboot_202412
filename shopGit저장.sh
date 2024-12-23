@@ -1,3 +1,3 @@
 git add .
-git commit -m "7장 주문 완료"
+git commit -m "8장 장바구니 완료"
 git push origin main
